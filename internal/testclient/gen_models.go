@@ -23,11 +23,6 @@ type Entity interface {
 	IsEntity()
 }
 
-type AnnotationNamespace struct {
-	// The owner of the annotation namespace.
-	Owner ResourceOwner `json:"owner"`
-}
-
 // Create a new virtual machine.
 type CreateVirtualMachineInput struct {
 	// The name of the Virtual Machine.
@@ -36,11 +31,13 @@ type CreateVirtualMachineInput struct {
 	OwnerID gidx.PrefixedID `json:"ownerID"`
 	// The ID for the location of this virtual machine.
 	LocationID gidx.PrefixedID `json:"locationID"`
+	// The userdata for this virtual machine.
+	Userdata *string `json:"userdata,omitempty"`
 }
 
 type Location struct {
-	ID             gidx.PrefixedID          `json:"id"`
-	VirtualMachine VirtualMachineConnection `json:"virtualMachine"`
+	ID              gidx.PrefixedID          `json:"id"`
+	VirtualMachines VirtualMachineConnection `json:"virtualMachines"`
 }
 
 func (Location) IsEntity() {}
@@ -69,6 +66,9 @@ func (ResourceOwner) IsEntity() {}
 type UpdateVirtualMachineInput struct {
 	// The name of the Virtual Machine.
 	Name *string `json:"name,omitempty"`
+	// The userdata for this virtual machine.
+	Userdata      *string `json:"userdata,omitempty"`
+	ClearUserdata *bool   `json:"clearUserdata,omitempty"`
 }
 
 type VirtualMachine struct {
@@ -78,8 +78,12 @@ type VirtualMachine struct {
 	UpdatedAt time.Time       `json:"updatedAt"`
 	// The name of the Virtual Machine.
 	Name string `json:"name"`
+	// The userdata for this virtual machine.
+	Userdata *string `json:"userdata,omitempty"`
 	// The location of the load balancer.
 	Location Location `json:"location"`
+	// The owner of the VirtualMachine
+	Owner ResourceOwner `json:"owner"`
 }
 
 func (VirtualMachine) IsNode() {}
